@@ -1,5 +1,5 @@
 //
-//  DataRepository.swift
+//  MovieRepository.swift
 //  MovieAppMVC
 //
 //  Created by Bisma Saeed on 15.05.26.
@@ -9,8 +9,7 @@
 import CoreData
 import Foundation
 
-final class DataRepository {
-
+final class MovieRepository {
     private let stack: CoreDataStack
 
     init(stack: CoreDataStack = .shared) {
@@ -84,45 +83,51 @@ final class DataRepository {
         }
     }
 
-    func save(genres: [Genre]) {
-        let request: NSFetchRequest<GenreEntity> = GenreEntity.fetchRequest()
+    func update(movie: Movie, detailResponse: MovieDetailsResponse) {
+        let request: NSFetchRequest<MovieEntity> = MovieEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", NSNumber(value: movie.id))
 
         do {
-            // Fetch existing genres
-            let existingGenres = try stack.context.fetch(request)
+            let entity = try stack.context.fetch(request).first
 
-            // Create lookup dictionary by id
-            let existingGenreMap = Dictionary(uniqueKeysWithValues: existingGenres.map {
-                    (Int($0.id), $0)
-                }
-            )
-
-            // Insert only missing genres
-            for genre in genres {
-                guard existingGenreMap[genre.id] == nil else { return }
+            for genre in detailResponse.genres {
                 let genreEntity = GenreEntity(context: stack.context)
                 genreEntity.id = Int64(genre.id)
                 genreEntity.name = genre.name
+                entity?.addToGenres(genreEntity)
             }
+
+            entity?.runtime = Int64(detailResponse.runtime)
             stack.saveContext()
         } catch {
             print("Failed to update genres: \(error)")
         }
     }
     // MARK: - Fetch all cached data
-    func fetchCachedMovies() -> [Movie] {
+    func fetchCachedMovies(id: Int? = nil) -> [Movie] {
         let request: NSFetchRequest<MovieEntity> = MovieEntity.fetchRequest()
+        if let id {
+            request.predicate = NSPredicate(format: "id == %@", NSNumber(value: id))
+        }
 
         do {
             let entities = try stack.context.fetch(request)
             return entities.map { entity in
-                Movie(id: Int(entity.id),
-                      title: entity.title ?? "",
-                      overview: entity.overview ?? "",
-                      posterPath: entity.posterPath,
-                      releaseDate: entity.releaseDate,
-                      voteAverage: entity.voteAverage,
-                      favourite: entity.favourite)
+
+                let genreSet = entity.genres as? Set<GenreEntity> ?? []
+                let genreArray = genreSet.map { genreEntity in
+                    Genre(id: Int(genreEntity.id), name: genreEntity.name ?? "Unknown")
+                }
+
+                return Movie(id: Int(entity.id),
+                             title: entity.title ?? "",
+                             overview: entity.overview ?? "",
+                             posterPath: entity.posterPath,
+                             releaseDate: entity.releaseDate,
+                             voteAverage: entity.voteAverage,
+                             favourite: entity.favourite,
+                             genres: genreArray,
+                             runtime: Int(entity.runtime))
             }
         } catch {
             print("Fetch movies error: \(error.localizedDescription)")
@@ -133,31 +138,13 @@ final class DataRepository {
     func fetchFavouriteMovieIDs() -> [Int] {
         let request: NSFetchRequest<MovieEntity> = MovieEntity.fetchRequest()
         request.predicate = NSPredicate(format: "favourite == %@", NSNumber(value: true))
-        request.resultType = .dictionaryResultType
         request.propertiesToFetch = ["id"]
-
 
         do {
             let results = try stack.context.fetch(request)
             return results.map { Int($0.id) }
         } catch {
             print("Fetch favourite movie IDs error: \(error.localizedDescription)")
-            return []
-        }
-    }
-
-
-    func fetchCachedGenre() -> [Genre] {
-        let request: NSFetchRequest<GenreEntity> = GenreEntity.fetchRequest()
-
-        do {
-            let entities = try stack.context.fetch(request)
-            return entities.map { entity in
-                Genre(id: Int(entity.id),
-                      name: entity.name ?? "")
-            }
-        } catch {
-            print("Fetch genre error: \(error.localizedDescription)")
             return []
         }
     }

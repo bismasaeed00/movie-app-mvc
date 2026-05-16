@@ -32,8 +32,7 @@ final class MovieService {
     // MARK: - Configuration
     private let apiKey = "3db0f53e603350e7a4fda7a09419f20a"
     private let moviesBaseURL = "https://api.themoviedb.org/3/discover/movie"
-    private let movieDetailURL = "https://api.themoviedb.org/3/movie/%@" // fetch on detail page
-    private let genreBaseURL = "https://api.themoviedb.org/3/genre/movie/list"
+    private let movieDetailURL = "https://api.themoviedb.org/3/movie/%lld"
 
     // MARK: - Fetch Movies
     func fetchMovies(page: Int = 1) async throws -> MovieResponse {
@@ -67,12 +66,13 @@ final class MovieService {
         }
     }
 
-    // MARK: - Fetch Genre tags
-    func fetchAllTags() async throws -> [Genre] {
-        var components = URLComponents(string: genreBaseURL)
+    //MARK: Fetch movie details
+    func fetchMovieDetails(_ movie: Movie) async throws -> MovieDetailsResponse {
+        let urlString = String(format: movieDetailURL, movie.id)
+        var components = URLComponents(string: urlString)
         components?.queryItems = [
             URLQueryItem(name: "api_key", value: apiKey),
-            URLQueryItem(name: "language", value: "en"),
+            URLQueryItem(name: "language", value: "en-US")
         ]
 
         guard let url = components?.url else {
@@ -91,10 +91,10 @@ final class MovieService {
         }
 
         do {
-            let response = try JSONDecoder().decode(GenreResponse.self, from: data)
-            return response.genres
+            return try JSONDecoder().decode(MovieDetailsResponse.self, from: data)
         } catch {
             throw MovieServiceError.decodingError(error)
         }
     }
+
 }

@@ -3,6 +3,7 @@
     <entity name="GenreEntity" representedClassName="GenreEntity" syncable="YES" codeGenerationType="class">
         <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
+        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MovieEntity" inverseName="genres" inverseEntity="MovieEntity"/>
     </entity>
     <entity name="MovieEntity" representedClassName=".MovieEntity" syncable="YES" codeGenerationType="class">
         <attribute name="favourite" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -10,8 +11,10 @@
         <attribute name="overview" attributeType="String"/>
         <attribute name="posterPath" optional="YES" attributeType="String"/>
         <attribute name="releaseDate" optional="YES" attributeType="String"/>
+        <attribute name="runtime" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="voteAverage" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="genres" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GenreEntity" inverseName="movie" inverseEntity="GenreEntity"/>
         <relationship name="response" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ResponseEntity" inverseName="movies" inverseEntity="ResponseEntity"/>
     </entity>
     <entity name="ResponseEntity" representedClassName="ResponseEntity" syncable="YES" codeGenerationType="class">

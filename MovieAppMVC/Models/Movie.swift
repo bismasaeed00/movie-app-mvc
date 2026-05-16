@@ -27,6 +27,8 @@ struct Movie: Codable, Identifiable {
     let releaseDate: String?
     let voteAverage: Double
     let favourite: Bool?
+    let genres: [Genre]?
+    let runtime: Int?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -36,6 +38,8 @@ struct Movie: Codable, Identifiable {
         case posterPath = "poster_path"
         case releaseDate = "release_date"
         case voteAverage = "vote_average"
+        case genres
+        case runtime
     }
 
     var posterURL: URL? {
@@ -46,5 +50,17 @@ struct Movie: Codable, Identifiable {
     var formattedYear: String {
         guard let date = releaseDate, date.count >= 4 else { return "N/A" }
         return String(date.prefix(4))
+    }
+}
+
+struct MovieDetailsResponse: Codable {
+    let id: Int
+    let runtime: Int
+    private(set) var genres: [Genre] = []
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case genres
+        case runtime
     }
 }

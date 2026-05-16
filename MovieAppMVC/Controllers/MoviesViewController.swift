@@ -16,7 +16,7 @@ final class MoviesViewController: ObservableObject {
     @Published private(set) var errorMessage: String? = nil
 
     private let service = MovieService()
-    private let repository = DataRepository()
+    private let repository = MovieRepository()
     private var currentPage = 1
     private var totalPages = 0
 
@@ -34,7 +34,6 @@ final class MoviesViewController: ObservableObject {
 
     func loadNetworkData() async {
         await fetchMoviesResponse()
-        await loadGenres()
     }
 
     /// Pull-to-refresh: clear cache, fetch fresh data.
@@ -76,14 +75,5 @@ final class MoviesViewController: ObservableObject {
         }
 
         isLoading = false
-    }
-
-    private func loadGenres() async {
-        do {
-            let fetched = try await service.fetchAllTags()
-            repository.save(genres: fetched)
-        } catch {
-            print(error.localizedDescription)
-        }
     }
 }

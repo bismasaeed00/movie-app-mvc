@@ -10,17 +10,44 @@ import Combine
 
 @MainActor
 final class MovieDetailController: ObservableObject {
-    let title: String
-    let year: String
-    let rating: String
-    let overview: String
-    let posterURL: URL?
+    private let service = MovieService()
+    private let repository = MovieRepository()
+    @Published private(set) var movie: Movie
+
+    var rating: String {
+        String(format: "%.1f", movie.voteAverage)
+    }
+
+    var isFavourite: Bool {
+        movie.favourite ?? false
+    }
+
+    var overview: String {
+        movie.overview.isEmpty ? "No overview available." : movie.overview
+    }
 
     init(movie: Movie) {
-        self.title = movie.title
-        self.year = movie.formattedYear
-        self.rating = String(format: "%.1f", movie.voteAverage)
-        self.overview = movie.overview.isEmpty ? "No overview available." : movie.overview
-        self.posterURL = movie.posterURL
+        self.movie = movie
+        loadCachedMovie()
+    }
+
+    func loadMovieDetails() async {
+        do {
+            let response = try await service.fetchMovieDetails(movie)
+            repository.update(movie: movie, detailResponse: response)
+            loadCachedMovie()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    func toggleFavourite() {
+        repository.updateMovie(movie: movie, isFavourite: !(movie.favourite ?? false))
+        loadCachedMovie()
+    }
+
+    private func loadCachedMovie() {
+        guard let updatedObj = repository.fetchCachedMovies(id: movie.id).first else { return }
+        movie = updatedObj
     }
 }
