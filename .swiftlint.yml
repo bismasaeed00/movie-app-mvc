@@ -1,0 +1,42 @@
+# Shared SwiftLint Configuration for Architecture Study
+
+# 1. Enforce Core Rules & Naming Conventions
+opt_in_rules:
+  - identifier_name
+  - type_name
+
+analyzer_rules:
+  - unused_import
+
+# 2. Configure Length & Complexity Metrics
+function_body_length:
+  warning: 40
+  error: 60       # Hard stop to prevent runaway function lengths
+
+type_body_length:
+  warning: 250    # Baseline for clean structural types
+  error: 400
+
+cyclomatic_complexity:
+  warning: 7      # Standard strict threshold for cognitive/cyclomatic weight
+  error: 10       # Disallows highly nested or complex logical blocks
+  ignores_case_statements: true
+
+# 3. Fine-Tune Naming Conventions (Controlling Bias)
+identifier_name:
+  min_length: 3   # Prevents vague shorthand like 'v' or 'vm'
+  max_length:
+    warning: 40
+  allowed_symbols: []
+  excluded:
+    - id          # Common exception for loop or database identifiers
+
+type_name:
+  min_length: 3
+  max_length:
+    warning: 40
+
+# 4. Global Code Quality Controls
+line_length: 120   # Keeps both architectures readable horizontally
+file_length:
+  warning: 500

@@ -1,0 +1,143 @@
+{
+    "non-test-frameworks": [
+        {
+            "MovieAppMVC": {
+                "loc": 773,
+                "noc": 89,
+                "poc": 10.325,
+                "n_a": 0,
+                "n_c": 16,
+                "nom": 23,
+                "not": 0,
+                "noi": 0,
+                "analysis": "The code is under commented. Zone of Pain. Highly stable and concrete component - rigid, hard to extend (not abstract). This component should not be volatile (e.g. a stable foundation library such as Strings).",
+                "dependencies": [],
+                "submodules": {
+                    "MovieAppMVC": {
+                        "n_of_files": 12,
+                        "metric": {
+                            "loc": 773,
+                            "noc": 89,
+                            "n_a": 0,
+                            "n_c": 16,
+                            "nom": 23,
+                            "not": 0,
+                            "poc": 10.325
+                        },
+                        "submodules": [
+                            {
+                                "MovieAppMVC": {
+                                    "n_of_files": 12,
+                                    "metric": {
+                                        "loc": 773,
+                                        "noc": 89,
+                                        "n_a": 0,
+                                        "n_c": 16,
+                                        "nom": 23,
+                                        "not": 0,
+                                        "poc": 10.325
+                                    },
+                                    "submodules": [
+                                        {
+                                            "Models": {
+                                                "n_of_files": 5,
+                                                "metric": {
+                                                    "loc": 312,
+                                                    "noc": 45,
+                                                    "n_a": 0,
+                                                    "n_c": 8,
+                                                    "nom": 9,
+                                                    "not": 0,
+                                                    "poc": 12.605
+                                                },
+                                                "submodules": []
+                                            }
+                                        },
+                                        {
+                                            "Controllers": {
+                                                "n_of_files": 2,
+                                                "metric": {
+                                                    "loc": 95,
+                                                    "noc": 13,
+                                                    "n_a": 0,
+                                                    "n_c": 2,
+                                                    "nom": 9,
+                                                    "not": 0,
+                                                    "poc": 12.037
+                                                },
+                                                "submodules": []
+                                            }
+                                        },
+                                        {
+                                            "Views": {
+                                                "n_of_files": 4,
+                                                "metric": {
+                                                    "loc": 357,
+                                                    "noc": 25,
+                                                    "n_a": 0,
+                                                    "n_c": 5,
+                                                    "nom": 5,
+                                                    "not": 0,
+                                                    "poc": 6.545
+                                                },
+                                                "submodules": []
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "fan_in": 0,
+                "fan_out": 0,
+                "i": 0.0,
+                "a": 0.0,
+                "d_3": 1.0
+            }
+        }
+    ],
+    "tests-frameworks": [],
+    "shared": {
+        "loc": 0,
+        "noc": 0,
+        "n_a": 0,
+        "n_c": 0,
+        "nom": 0,
+        "not": 0,
+        "poc": 0.0,
+        "noi": 0
+    },
+    "aggregate": {
+        "non-test-frameworks": {
+            "loc": 773,
+            "noc": 89,
+            "n_a": 0,
+            "n_c": 16,
+            "nom": 23,
+            "not": 0,
+            "poc": 10.325,
+            "noi": 0
+        },
+        "tests-frameworks": {
+            "loc": 0,
+            "noc": 0,
+            "n_a": 0,
+            "n_c": 0,
+            "nom": 0,
+            "not": 0,
+            "poc": 0.0,
+            "noi": 0
+        },
+        "total": {
+            "loc": 773,
+            "noc": 89,
+            "n_a": 0,
+            "n_c": 16,
+            "nom": 23,
+            "not": 0,
+            "poc": 10.325,
+            "noi": 0
+        }
+    }
+}
