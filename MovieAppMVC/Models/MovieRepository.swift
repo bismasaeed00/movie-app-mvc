@@ -5,7 +5,6 @@
 //  Created by Bisma Saeed on 15.05.26.
 //
 
-
 import CoreData
 import Foundation
 
@@ -26,14 +25,7 @@ final class MovieRepository {
             let cachedResponses = try stack.context.fetch(request)
 
             // Build lookup dictionary using movie id
-            var existingMovies: [Int: MovieEntity] = [:]
-            for responseEntity in cachedResponses {
-                if let movies = responseEntity.movies as? Set<MovieEntity> {
-                    for movie in movies {
-                        existingMovies[Int(movie.id)] = movie
-                    }
-                }
-            }
+            let existingMovies = getExistingMovieIDs(responses: cachedResponses)
 
             // If page exists → update existing movies
             if !cachedResponses.isEmpty {
@@ -46,15 +38,8 @@ final class MovieRepository {
                         existingMovie.voteAverage = movie.voteAverage
                     } else {
                         // Insert new movie if missing
-                        let newMovie = MovieEntity(context: stack.context)
-                        newMovie.id = Int64(movie.id)
-                        newMovie.title = movie.title
-                        newMovie.overview = movie.overview
-                        newMovie.posterPath = movie.posterPath
-                        newMovie.releaseDate = movie.releaseDate
-                        newMovie.voteAverage = movie.voteAverage
-
-                        cachedResponses.first?.addToMovies(newMovie)
+                        let movieEntity = createNewMovieEntity(movie: movie)
+                        cachedResponses.first?.addToMovies(movieEntity)
                     }
                 }
 
@@ -65,13 +50,7 @@ final class MovieRepository {
                 responseEntity.total_pages = Int64(response.totalPages)
 
                 for movie in response.results {
-                    let movieEntity = MovieEntity(context: stack.context)
-                    movieEntity.id = Int64(movie.id)
-                    movieEntity.title = movie.title
-                    movieEntity.overview = movie.overview
-                    movieEntity.posterPath = movie.posterPath
-                    movieEntity.releaseDate = movie.releaseDate
-                    movieEntity.voteAverage = movie.voteAverage
+                    let movieEntity = createNewMovieEntity(movie: movie)
                     responseEntity.addToMovies(movieEntity)
                 }
             }
@@ -187,5 +166,28 @@ final class MovieRepository {
         } catch {
             print("Failed to update movie: \(error)")
         }
+    }
+
+    private func createNewMovieEntity(movie: Movie) -> MovieEntity {
+        let movieEntity = MovieEntity(context: stack.context)
+        movieEntity.id = Int64(movie.id)
+        movieEntity.title = movie.title
+        movieEntity.overview = movie.overview
+        movieEntity.posterPath = movie.posterPath
+        movieEntity.releaseDate = movie.releaseDate
+        movieEntity.voteAverage = movie.voteAverage
+
+        return movieEntity
+    }
+
+    private func getExistingMovieIDs(responses: [ResponseEntity]) -> [Int: MovieEntity] {
+        var existingMovies: [Int: MovieEntity] = [:]
+        for responseEntity in responses {
+            guard let movies = responseEntity.movies as? Set<MovieEntity> else { continue }
+            for movie in movies {
+                existingMovies[Int(movie.id)] = movie
+            }
+        }
+        return existingMovies
     }
 }

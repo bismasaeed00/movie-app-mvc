@@ -13,7 +13,7 @@ final class MoviesViewController: ObservableObject {
     @Published private(set) var movies: [Movie] = []
     @Published private(set) var favoriteMovieIDs: [Int] = []
     @Published private(set) var isLoading: Bool = false
-    @Published private(set) var errorMessage: String? = nil
+    @Published private(set) var errorMessage: String?
 
     private let service = MovieService()
     private let repository = MovieRepository()

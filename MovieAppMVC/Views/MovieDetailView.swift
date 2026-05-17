@@ -23,7 +23,7 @@ struct MovieDetailView: View {
                     Text(controller.movie.title)
                         .font(.title.bold())
                     HStack(spacing: 12) {
-                        Label(controller.movie.formattedYear,   systemImage: "calendar")
+                        Label(controller.movie.formattedYear, systemImage: "calendar")
                         Label(controller.rating, systemImage: "star.fill")
                             .foregroundColor(.yellow)
                     }
@@ -65,9 +65,9 @@ struct MovieDetailView: View {
     }
 
     private var favouriteButton: some View {
-        Button(action: {
+        Button {
             controller.toggleFavourite()
-        }) {
+        } label: {
             Image(systemName: controller.isFavourite ? "heart.fill" : "heart")
                 .foregroundColor(controller.isFavourite ? .red : .primary)
                 .font(.body.bold())
@@ -77,16 +77,16 @@ struct MovieDetailView: View {
     private var posterView: some View {
         AsyncImage(url: controller.movie.posterURL) { phase in
             switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                case .failure, .empty:
-                    Rectangle()
-                        .fill(Color(.tertiarySystemBackground))
-                        .overlay(Image(systemName: "film").font(.largeTitle))
-                @unknown default:
-                    EmptyView()
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            case .failure, .empty:
+                Rectangle()
+                    .fill(Color(.tertiarySystemBackground))
+                    .overlay(Image(systemName: "film").font(.largeTitle))
+            @unknown default:
+                EmptyView()
             }
         }
         .frame(maxWidth: .infinity)
@@ -99,7 +99,7 @@ struct MovieDetailView: View {
     private var genreChips: some View {
         if let genres = controller.movie.genres, !genres.isEmpty {
             FlowLayout(spacing: 8) {
-                ForEach(Array(genres.enumerated()), id: \.offset) { index, genre in
+                ForEach(Array(genres.enumerated()), id: \.offset) { _, genre in
                     Text(genre.name)
                         .font(.footnote)
                         .fontWeight(.semibold)
@@ -146,19 +146,19 @@ struct FlowLayout: Layout {
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
-        var x = bounds.minX
-        var y = bounds.minY
+        var minX = bounds.minX
+        var minY = bounds.minY
         var lineHeight: CGFloat = 0
 
         for index in subviews.indices {
             let size = sizes[index]
-            if x + size.width > bounds.maxX {
-                x = bounds.minX
-                y += lineHeight + spacing
+            if minX + size.width > bounds.maxX {
+                minX = bounds.minX
+                minY += lineHeight + spacing
                 lineHeight = 0
             }
-            subviews[index].place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-            x += size.width + spacing
+            subviews[index].place(at: CGPoint(x: minX, y: minY), proposal: ProposedViewSize(size))
+            minX += size.width + spacing
             lineHeight = max(lineHeight, size.height)
         }
     }

@@ -15,14 +15,14 @@ enum MovieServiceError: Error, LocalizedError {
 
     var errorDescription: String? {
         switch self {
-            case .invalidURL:              
-                "Invalid URL."
-            case .networkError(let e):     
-                "Network error: \(e.localizedDescription)"
-            case .decodingError(let e):    
-                "Decoding error: \(e.localizedDescription)"
-            case .httpError(let code):     
-                "HTTP error \(code)."
+        case .invalidURL:
+            "Invalid URL."
+        case .networkError(let error):
+            "Network error: \(error.localizedDescription)"
+        case .decodingError(let error):
+            "Decoding error: \(error.localizedDescription)"
+        case .httpError(let code):
+            "HTTP error \(code)."
         }
     }
 }
@@ -66,7 +66,7 @@ final class MovieService {
         }
     }
 
-    //MARK: Fetch movie details
+    // MARK: Fetch movie details
     func fetchMovieDetails(_ movie: Movie) async throws -> MovieDetailsResponse {
         let urlString = String(format: movieDetailURL, movie.id)
         var components = URLComponents(string: urlString)

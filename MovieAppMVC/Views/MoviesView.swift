@@ -44,10 +44,10 @@ struct MoviesView: View {
 
     private var filteredMovies: [Movie] {
         switch selectedTab {
-            case .all:
-                return controller.movies
-            case .favorites:
-                return controller.movies.filter { controller.isFavorite(movie: $0) }
+        case .all:
+            return controller.movies
+        case .favorites:
+            return controller.movies.filter { controller.isFavorite(movie: $0) }
         }
     }
 
@@ -136,16 +136,16 @@ struct MoviesView: View {
     private func posterImage(posterURL: URL?) -> some View {
         AsyncImage(url: posterURL) { phase in
             switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .failure:
-                    posterPlaceholder
-                case .empty:
-                    posterPlaceholder.redacted(reason: .placeholder)
-                @unknown default:
-                    posterPlaceholder
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            case .failure:
+                posterPlaceholder
+            case .empty:
+                posterPlaceholder.redacted(reason: .placeholder)
+            @unknown default:
+                posterPlaceholder
             }
         }
         .frame(width: 70, height: 105)
