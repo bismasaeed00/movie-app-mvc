@@ -5,6 +5,8 @@
 //  Created by Bisma Saeed on 15.05.26.
 //
 
+import Foundation
+
 struct MovieResponse: Codable {
     let results: [Movie]
     let page: Int
