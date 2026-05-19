@@ -28,13 +28,10 @@ enum MovieServiceError: Error, LocalizedError {
 }
 
 final class MovieService {
-
-    // MARK: - Configuration
     private let apiKey = "3db0f53e603350e7a4fda7a09419f20a"
     private let moviesBaseURL = "https://api.themoviedb.org/3/discover/movie"
     private let movieDetailURL = "https://api.themoviedb.org/3/movie/%lld"
 
-    // MARK: - Fetch Movies
     func fetchMovies(page: Int = 1) async throws -> MovieResponse {
         var components = URLComponents(string: moviesBaseURL)
         components?.queryItems = [
@@ -66,7 +63,6 @@ final class MovieService {
         }
     }
 
-    // MARK: Fetch movie details
     func fetchMovieDetails(_ movie: Movie) async throws -> MovieDetailsResponse {
         let urlString = String(format: movieDetailURL, movie.id)
         var components = URLComponents(string: urlString)

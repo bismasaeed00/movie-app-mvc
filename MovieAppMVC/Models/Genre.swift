@@ -5,8 +5,6 @@
 //  Created by Bisma Saeed on 16.05.26.
 //
 
-import Foundation
-
 struct GenreResponse: Decodable {
     let genres: [Genre]
 }

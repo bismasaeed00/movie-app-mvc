@@ -7,65 +7,48 @@
 
 import SwiftUI
 
-enum MoviesTab {
-    case all
-    case favorites
-}
-
 struct MoviesView: View {
     @StateObject private var controller = MoviesViewController()
-    @State private var selectedTab: MoviesTab = .all
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                tabsView
-                content
-            }
-            .navigationTitle("Movies")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if controller.isLoading {
-                        ProgressView()
+        TabView {
+            NavigationStack {
+                VStack(spacing: 0) {
+                    moviesContent
+                }
+                .navigationTitle("Movies")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if controller.isLoading {
+                            ProgressView()
+                        }
                     }
                 }
-            }
-            .task {
-                await controller.loadNetworkData()
-            }
-            .refreshable {
-                if selectedTab == .all {
+                .task {
+                    await controller.loadNetworkData()
+                }
+                .refreshable {
                     await controller.refresh()
                 }
             }
-        }
-    }
+            .tabItem {
+                Label("Movies", systemImage: "film.stack")
+            }
 
-    private var filteredMovies: [Movie] {
-        switch selectedTab {
-        case .all:
-            return controller.movies
-        case .favorites:
-            return controller.movies.filter { controller.isFavorite(movie: $0) }
+            NavigationStack {
+                movieList(movies: controller.movies.filter { controller.isFavorite(movie: $0) }, hasFooter: false)
+                    .navigationTitle("Favourites")
+                    .navigationBarTitleDisplayMode(.large)
+            }
+            .tabItem {
+                Label("Favourites", systemImage: "heart.fill")
+            }
         }
-    }
-
-    private var tabsView: some View {
-        Picker("", selection: $selectedTab) {
-            Text("All").tag(MoviesTab.all)
-            Text("Favorites").tag(MoviesTab.favorites)
-        }
-        .pickerStyle(.segmented)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.gray)
-        )
-        .padding(.horizontal)
     }
 
     @ViewBuilder
-    private var content: some View {
+    private var moviesContent: some View {
         if let error = controller.errorMessage, controller.movies.isEmpty {
             ErrorView(message: error) {
                 Task {
@@ -75,14 +58,14 @@ struct MoviesView: View {
         } else if controller.movies.isEmpty && !controller.isLoading {
             EmptyStateView()
         } else {
-            movieList
+            movieList(movies: controller.movies, hasFooter: true)
         }
     }
 
     // MARK: - Movie List
-    private var movieList: some View {
+    private func movieList(movies: [Movie], hasFooter: Bool) -> some View {
         List {
-            ForEach(filteredMovies) { movie in
+            ForEach(movies) { movie in
                 NavigationLink(destination: MovieDetailView(controller: MovieDetailController(movie: movie))) {
                     movieRow(movie: movie)
                 }
@@ -90,13 +73,16 @@ struct MoviesView: View {
                 .listRowBackground(Color.clear)
             }
 
-            if selectedTab == .all {
+            if hasFooter {
                 footerView
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
             }
         }
         .listStyle(.plain)
+        .onAppear {
+            controller.onAppear()
+        }
     }
 
     @ViewBuilder

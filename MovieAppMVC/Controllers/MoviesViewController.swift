@@ -28,10 +28,6 @@ final class MoviesViewController: ObservableObject {
         "Next Page: \(currentPage + 1) out of \(totalPages)"
     }
 
-    init() {
-        loadCachedData()
-    }
-
     func loadNetworkData() async {
         await fetchMoviesResponse()
     }
@@ -75,5 +71,9 @@ final class MoviesViewController: ObservableObject {
         }
 
         isLoading = false
+    }
+
+    func onAppear() {
+        loadCachedData()
     }
 }

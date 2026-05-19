@@ -9,19 +9,15 @@ import CoreData
 import Foundation
 
 final class CoreDataStack {
-
     static let shared = CoreDataStack()
-    private init() {
-
-    }
+    private init() { /* restrict re-init of singeltons */ }
 
     // MARK: - Persistent Container
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "MovieAppMVC")
         container.loadPersistentStores { _, error in
-            if let error = error {
-                fatalError("Core Data failed to load: \(error.localizedDescription)")
-            }
+            guard let error else { return }
+            fatalError("Core Data failed to load: \(error.localizedDescription)")
         }
         container.viewContext.automaticallyMergesChangesFromParent = true
         return container
